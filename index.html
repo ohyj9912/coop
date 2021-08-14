@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="datashow">
+    <h1>DataManager</h1>
+    <div>
+      contract account : <input type="text" id="Contract">
+    </div>
+    <div>
+      Accounts:
+      <input type="text" id="Account">
+      Balance :
+      <input id="Balance" type="text">
+      <button id="setBtn">Check</button>
+      <p></p>
+    </div>
+    <br />
+    <div>
+      <input type="text" id="id" placeholder="id"/>
+      <input type="text" id="temp" placeholder="temperature"/>
+      <input type="text" id="hum" placeholder="humidity"/>
+    </div>
+    <table style="width:100%" id="table1"></table>
+    <br />
+    
+    <table border="1">
+      <thead>
+          <tr>
+              <th colspan="4">Data in transaction</th>
+          </tr>
+      </thead>
+      <tbody id="tblshow">
+          <tr>
+              <td>Transcation Number</td>
+              <td>ID</td>
+              <td>Temperature</td>
+              <td>Humidity</td>
+          </tr>
+      </tbody>
+    </table>
+
+  </div>
+  <div id="textArea"></div>
+
+  <script type="text/javascript" src="C:/Users/oyj26/Desktop/test_js/js/web3.js" charset="UTF-8"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+  <script>
+    var Web3 = require('web3');
+    var web3 = new Web3();
+    web3.setProvider(new web3.providers.HttpProvider('http://127.0.0.1:8545'));
+    console.log("web sucess!")
+    // if (typeof web3 !== 'undefined') {
+		// 	web3 = new Web3(web3.currentProvider);
+		// } else {
+		// 		// set the provider you want from Web3.providers
+		// 	web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+	  // }
+    
+    //smart contract info
+    const contractAddress = "0x78d80f33e7a77e9df049ff7724127e105e685ad4";
+    const smartContract = web3.eth.contract([
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_id",
+            "type": "uint256"
+          },
+          {
+            "name": "_temp",
+            "type": "int256"
+          },
+          {
+            "name": "_hum",
+            "type": "int256"
+          }
+        ],
+        "name": "setData",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "_id",
+            "type": "uint256"
+          }
+        ],
+        "name": "getTemp",
+        "outputs": [
+          {
+            "name": "",
+            "type": "int256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "_id",
+            "type": "uint256"
+          }
+        ],
+        "name": "getHum",
+        "outputs": [
+          {
+            "name": "",
+            "type": "int256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      }
+    ]).at(contractAddress);
+
+
+    //getaccounts
+
+    // $('#Account').val(web3.eth.accounts[0]);
+
+    web3.eth.getAccounts(function(error, accounts) {
+			if(error) {
+				console.log(error);
+			}
+      $('#Contract').val(contractAddress);
+			$('#Account').val(accounts[0]);
+			$('#Balance').val(web3.fromWei(web3.eth.getBalance(accounts[0])),'ether');
+		});
+
+      
+    $('#setBtn').click(function() {
+      var _id = document.getElementById('id').value;
+      var _temp = document.getElementById('temp').value;
+      var _hum = document.getElementById('hum').value;
+
+      smartContract.setData(_id, _temp, _hum, {from: document.getElementById('Account').value, gas: 3000000},(err, result) => {
+        if (!err) alert("트랜잭션이 성공적으로 전송되었습니다.\n" + result);
+        //show data
+          var objrow = document.all("tblshow").insertRow();
+          var objcell_tx = objrow.insertCell();
+          objcell_tx.innerHTML = result;
+          var objcell_id = objrow.insertCell();
+          objcell_id.innerHTML = _id;
+          var objcell_temp = objrow.insertCell();
+          objcell_temp.innerHTML = _temp;
+          var objcell_hum = objrow.insertCell();
+          objcell_hum.innerHTML = _hum;
+        }
+      );
+    });
+    
+    $(function() {
+      var fileName = "./testDapp.csv";	
+      var parse = 0; 		// var형 i를 정수로 변환시킨 값을 담을 변수
+      
+        $.ajax({
+          url:fileName,
+          dataType:'text',
+          success: function(data) {
+            var allRow = data;
+            //.split(/\r?\n|\r/)
+            var textLine = "";
+            for(var singleRow = 0; singleRow < allRow.length; singleRow++) {
+              var collapse = allRow[singleRow].split(",");
+              
+              for(var count = 0; count < collapse.length; count++) {
+                textLine += collapse[count];
+              }
+            }
+            
+            $('#textArea').append(textLine);
+            $('#textArea').append("<br>");
+          }
+        });
+    });
+    
+  </script>
+  
+</body>
+
+</html>
