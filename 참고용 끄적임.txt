@@ -1,0 +1,21 @@
+//truffle 에서 콘솔 확인하기
+truffle console --network development
+
+//스마트 컨트랙트
+var ctrl = Controldata.at("0x78d80f33e7a77e9df049ff7724127e105e685ad4")
+ctrl.setData(_input, _input, _input)
+ctrl.getTemp(_id)
+ctrl.getHum(_id)
+
+//a = web3.eth.getStorageAt("컨트랙트계정")
+//web3._extend.utils.toAscii(a)
+
+//geth 초기접속
+cd desktop\blockchain
+geth --datadir .\private_chaindata\ --rpc --rpcport 8545 --unlock 0 --allow-insecure-unlock
+
+//추가 cmd창
+geth attach ipc://./pipe/geth.ipc
+
+//geth 배포 컨트랙트 hash
+0xf0e10a75c970e6cce266e3715b21021d1f44df30
