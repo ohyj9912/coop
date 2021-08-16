@@ -5,6 +5,7 @@
   2-2. migrate 후 contract 주소가 안나오면 truffle migrate --network development 뒤에 --reset 을 붙일것
 3. network 에 맞게 port 변경, contract 주소 변경
   3-1. geth 의 경우 설정하지 않았을때 포트번호 8545
+  3-2. ganache 의 경우 매 실행마다 새로 contract를 deploy 해야 함
 4. 원하는 csv file 로 경로 설정
 5. index.html 실행
 
